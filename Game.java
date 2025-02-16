@@ -55,12 +55,18 @@ public class Game {
 
 	//sortear cartas de utilidade:
 	private void drawUtilityCards(int numberOfCards) {
-		for (int i = 0; i < numberOfCards; i++) {UtilityCard card = utilityPile.drawCard();
-		if (card != null) {
-			System.out.println(card.getTitle());
-		}
+		for (int i = 0; i < numberOfCards; i++) {
+			UtilityCard card = utilityPile.drawCard();
+			if (card != null) {
+				System.out.println(card.getTitle());
+			}
 		}
 
+	}
+	
+	private void showUtilityCards() {
+		System.out.println("Avaiable utilities:");
+		utilityPile.showCards();
 	}
 
 	private void drawHazardCards() {
