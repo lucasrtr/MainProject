@@ -13,6 +13,11 @@ public class Player {
 	private int basePower;
 	private int creaturesDefeatedLastRound;
 	private Weapon equippedWeapon;
+	private Weapon equippedShield;
+	private Effects activeAbility;
+    private Effects activeDivinity;
+    private Effects activeDisease;
+    private Effects activeCurse;
 	private List<UtilityCard> backpack; 
 	private List<UtilityPile> equippedItems = new ArrayList<>();
 
@@ -23,6 +28,10 @@ public class Player {
         this.health = 15; // Valor inicial de vida
         this.shieldDefense = 0; // Defesa inicial do escudo zerada - mais tarde implementar a questão do shield token
         this.hasShield = false;
+        this.activeAbility = null;
+        this.activeDivinity = null;
+        this.activeDisease = null;
+        this.activeCurse = null;
         this.backpack = new ArrayList<>(); // Inicializa a mochila
 	}
 
@@ -32,6 +41,14 @@ public class Player {
 
 	public int getPassivePower() {
 		return basePower;
+	}
+	
+	public Weapon getEquippedWeapon() {
+		return equippedWeapon;
+	}
+	
+	public Weapon getEquippedShield() {
+		return equippedShield;
 	}
 
 
@@ -52,6 +69,25 @@ public class Player {
 		System.out.println("Equipped item: " + item.getTitle());
 	}
 	
+	 public Effects getActiveAbility() { return activeAbility; }
+	    public void setActiveAbility(Effects ability) { this.activeAbility = ability; }
+
+	    public Effects getActiveDivinity() { return activeDivinity; }
+	    public void setActiveDivinity(Effects divinity) { this.activeDivinity = divinity; }
+
+	    public Effects getActiveDisease() { return activeDisease; }
+	    public void setActiveDisease(Effects disease) { this.activeDisease = disease; }
+	    
+	    public Effects getActiveCurse() { return activeCurse; }
+	    public void setActiveCurse(Effects curse) { this.activeCurse = curse; }
+
+	    public void updateEffects() {
+	        if (activeAbility != null && activeAbility.getDuration() > 0) activeAbility.decreaseDuration();
+	        if (activeDivinity != null && activeDivinity.getDuration() > 0) activeDivinity.decreaseDuration();
+	        if (activeDisease != null && activeDisease.getDuration() > 0) activeDisease.decreaseDuration();
+	        if (activeCurse != null && activeCurse.getDuration() > 0) activeCurse.decreaseDuration();
+	    }
+	
 	public void showEquippedItems() {
         System.out.println("Itens equipados:");
         for (UtilityPile item : equippedItems) {
@@ -70,6 +106,18 @@ public class Player {
             health -= damage;
         }
     }
+	
+	public List<UtilityCard> getBackPack() {
+		return backpack;
+	}
+	
+	public void addToBackpack(UtilityCard utilityCard) {
+		backpack.add(utilityCard);
+	}
+	
+	public void removeToBackpack(UtilityCard utilityCard) {
+		backpack.remove(utilityCard);
+	}
 
 	public boolean isAlive() {
 		return health > 0;
@@ -113,7 +161,7 @@ public class Player {
 		System.out.println("The backpack items have been lost during the escape.");
 	}
 	
-	private void reserEscapeAbility() {
+	private void resetEscapeAbility() {
 		this.canUseEscape = true; // Reseta no início de cada rodada -- mais tarde implementar tirar da rodada final
 	}
 	

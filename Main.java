@@ -17,13 +17,13 @@ public class Main {
             System.out.println("Press Enter to draw Utility cards.");
             scanner.nextLine();
             
-            game.drawUtilityCards();
+            game.drawUtilityCards(game.calculateUtilityCards());
             game.showUtilityCards(); // Exibir cartas sorteadas para o jogador
             
             System.out.println("Press Enter to reveal Hazard cards.");
             scanner.nextLine();
             
-            game.drawFromHazardPile();
+            game.drawFromHazardPile(game.calculateHazardCards());
             game.showHazardCards(); // Exibir as cartas de perigo
             
             System.out.println("Press Enter to start combat.");
