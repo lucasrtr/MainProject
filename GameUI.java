@@ -1,3 +1,5 @@
+
+
 package cardGame;
 
 import java.awt.BorderLayout;
@@ -6,10 +8,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridLayout;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,13 +19,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 public class GameUI {
 	private JFrame frame;
+	private JTextArea playerInfo;
+	private JPanel gameArea;
+	private JPanel hazardZone;
 	private JPanel panel, playerPanel, gamePanel, cardPanel, infoPanel, backpackPanel;
 	private JButton startButton, nextRoundButton;
 	private JTextArea backpackTextArea;
+	private JScrollPane backPackScroll;
 	private JLabel lifeLabel, weaponLabel, shieldLabel, abilityLabel, divinityLabel, diseaseLabel, curseLabel;
 	private UtilityPile utilityPile;
 	private Game game;
@@ -38,26 +43,47 @@ public class GameUI {
 
 		frame = new JFrame("HAZARD'S QUEST");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 600);
+		frame.setSize(1000, 700);
 		frame.setLayout(new BorderLayout());
 
-		panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-		JLabel titleLabel = new JLabel("Welcome to Hazard's Quest!");
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		// Header
+		JLabel titleLabel = new JLabel("Welcome to Hazard's Quest!", SwingConstants.CENTER);
+		titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+		frame.add(titleLabel, BorderLayout.NORTH);
 
 		startButton = new JButton("Start Game");
 		startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		startButton.addActionListener(e -> startGame());
 
-		// Painel do jogador (Topo)
-		playerPanel = new JPanel();
-		playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
-		playerPanel.setBorder(BorderFactory.createTitledBorder("Player Info"));
-		playerPanel.setPreferredSize(new Dimension(250, 600));
+		// Painel do jogador
+		JPanel playerInfoPanel = new JPanel();
+		playerInfoPanel.setLayout(new BoxLayout(playerInfoPanel, BoxLayout.Y_AXIS));
+		playerInfoPanel.setBorder(BorderFactory.createTitledBorder("Player Info"));
+		playerInfo = new JTextArea("Health: 15\nEquipped Weapon: None\nEquipped Shield: None\nActive Ability: None\nActive Divinity: None\nActive Disease: None\nActive Curse: None");
+		playerInfo.setEditable(false);
+		playerInfoPanel.add(playerInfo);
+		frame.add(playerInfoPanel, BorderLayout.WEST);
+		
+		// Game Area Panel
+		gameArea = new JPanel(new BorderLayout());
+		gameArea.setBorder(BorderFactory.createTitledBorder("Game Area"));
+		gameArea.setLayout(new GridLayout(1, 2, 10, 10)); // Expandindo Game Area
+		frame.add(gameArea, BorderLayout.CENTER);
+		
+		// Criando o painel de cartas dentro do gamePanel
+		gamePanel = new JPanel(new BorderLayout());
+		cardPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+		gamePanel.add(cardPanel, BorderLayout.NORTH);
+		gameArea.add(gamePanel, BorderLayout.CENTER);
+		
+		// Hazard Zone
+		hazardZone = new JPanel();
+        hazardZone.setBorder(BorderFactory.createTitledBorder("Hazard Zone"));
+        hazardZone.setLayout(new FlowLayout(FlowLayout.LEFT)); // Mostrar múltiplas cartas
+        gameArea.add(hazardZone);
 
-		// Labels de stats do jogador
+	/*	// Labels de stats do jogador
 		lifeLabel = new JLabel("Health: " + game.getPlayerLife());
 		weaponLabel = new JLabel("Equipped Weapon: None");
 		shieldLabel = new JLabel("Equipped Shield: None");
@@ -73,74 +99,74 @@ public class GameUI {
 		playerPanel.add(divinityLabel);
 		playerPanel.add(diseaseLabel);
 		playerPanel.add(curseLabel);
+		*/
 
 		// Painel da mochila do jogador
 		backpackPanel = new JPanel();
-		backpackPanel.setLayout(new BorderLayout());
 		backpackPanel.setBorder(BorderFactory.createTitledBorder("Backpack"));
-		backpackTextArea = new JTextArea(5, 20);
+		backpackPanel.setLayout(new FlowLayout());
+		backpackTextArea = new JTextArea(5, 40);
 		backpackTextArea.setEditable(false);
-		backpackPanel.add(new JScrollPane(backpackTextArea), BorderLayout.CENTER);
-		playerPanel.add(backpackPanel);
+		backPackScroll = new JScrollPane(backpackTextArea);
+		backpackPanel.add(backPackScroll, BorderLayout.CENTER);
+	//	backpackPanel.setPreferredSize(new Dimension(900, 60)); // Reduzindo drasticamente o espaço
+		frame.add(backpackPanel, BorderLayout.SOUTH);
 
 		// Painel do jogo (Centro - Cartas)
-		gamePanel = new JPanel(new BorderLayout());
-		gamePanel.setBorder(BorderFactory.createTitledBorder("Game Area"));
-
 		cardPanel = new JPanel();
-		cardPanel.setLayout(new FlowLayout());
-		gamePanel.add(cardPanel, BorderLayout.CENTER);
+		cardPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+		gameArea.add(cardPanel);
+
+		cardPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+		gamePanel.add(cardPanel, BorderLayout.NORTH);
+		
+		// Painel de Hazards
+		hazardZone = new JPanel(new FlowLayout());
+		hazardZone.setBorder(BorderFactory.createTitledBorder("Hazard Zone"));
+		gamePanel.add(hazardZone, BorderLayout.CENTER);
 
 		// Painel de Botões
 		JPanel buttonPanel = new JPanel();
-		nextRoundButton = new JButton("Next Round");
-		nextRoundButton.setEnabled(false);
+        nextRoundButton = new JButton("Next Round");
+        nextRoundButton.setEnabled(false);
+        buttonPanel.add(startButton);
+        buttonPanel.add(nextRoundButton);
+        frame.add(buttonPanel, BorderLayout.PAGE_END);
 
-		buttonPanel.add(startButton);
-		buttonPanel.add(nextRoundButton);		
-
-		// Eventos dos botões
-		startButton.addActionListener(e -> startGame());
-		nextRoundButton.addActionListener(e -> drawUtilityCards(game.calculateUtilityCards()));
-
-		// Adiciona os painéis ao frame
-
-		panel.add(titleLabel);
-		panel.add(startButton);
-		panel.add(playerPanel);
-		panel.add(gamePanel);
-		panel.add(buttonPanel);
-
-		frame.add(panel, BorderLayout.CENTER);
-		frame.setVisible(true);
-	}
-
+        frame.setVisible(true);
+        
+        frame.add(titleLabel, BorderLayout.NORTH);
+        frame.add(playerInfoPanel, BorderLayout.WEST);
+        frame.add(gameArea, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+    }		
+        
 	private void startGame() {
-		cardPanel.removeAll(); // Limpa o painel antes de adicionar novas cartas
-		JOptionPane.showMessageDialog(frame, "First Round...");
-		JOptionPane.showMessageDialog(frame, "Three Utility cards will be drawn." + "\n You have to choose two of them.");
-		startButton.setEnabled(false);
-		nextRoundButton.setEnabled(true);
-		drawUtilityCards(game.calculateUtilityCards());
-		updatePlayerInfo();
-
+	    cardPanel.removeAll(); // Limpa o painel antes de adicionar novas cartas
+	    JOptionPane.showMessageDialog(frame, "First Round...");
+	    JOptionPane.showMessageDialog(frame, "Three Utility cards will be drawn." + "\n You have to choose two of them.");
+	    startButton.setEnabled(false);
+	    nextRoundButton.setEnabled(true);	    
+	    drawUtilityCards(game.calculateUtilityCards());
+	    updatePlayerInfo();
 	}
 
 	private void drawUtilityCards(int numberOfCards) {
-		cardPanel.removeAll();
-		List<String> drawnCards = game.drawUtilityCards(numberOfCards);
+	    cardPanel.removeAll();
+	    List<String> drawnCards = game.drawUtilityCards(numberOfCards);
+	    // Garantindo que 3 cartas sejam exibidas
+	    for (String cardTitle : drawnCards) {
+	        JPanel card = new JPanel();
+	        card.setPreferredSize(new Dimension(100, 150));
+	        card.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+	        card.add(new JLabel(cardTitle));
+	        cardPanel.add(card);
+	    }
 
-		for (String cardTitle : drawnCards) {
-			JPanel card = new JPanel();
-			card.setPreferredSize(new Dimension(100, 150));
-			card.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-			card.add(new JLabel(cardTitle));
-			cardPanel.add(card);
-		}
-		cardPanel.revalidate();
-		cardPanel.repaint();
+	    cardPanel.revalidate();
+	    cardPanel.repaint();
 	}
-
+	
 	// Atualiza os stats do jogador
 	private void updatePlayerInfo() {
 		lifeLabel.setText("Health: " + game.getPlayerLife());
@@ -154,6 +180,10 @@ public class GameUI {
 	}
 
 	private void updateBackpack() {
+		backpackTextArea = new JTextArea(3, 40);
+		backpackTextArea.setEditable(false);
+		JScrollPane backpackScroll = new JScrollPane(backpackTextArea);
+		backpackPanel.add(backpackScroll);
 		List<UtilityCard> backpack = game.getPlayer().getBackPack();
 		StringBuilder contents = new StringBuilder("Backpack:\n");
 		for (UtilityCard card : backpack) {
