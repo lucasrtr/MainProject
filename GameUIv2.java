@@ -5,75 +5,70 @@ import java.awt.*;
 
 public class GameUIv2 {
     private JFrame frame;
-    private JTextArea mainArea, playerStatus, actionArea, logArea;
+    private JTextArea gameTextArea;
+    private JTextArea statusTextArea;
+    private JTextArea logTextArea;
     private JButton nextRoundButton;
-    private Game game;
 
     public GameUIv2() {
-        game = new Game();
-        
         frame = new JFrame("HAZARD'S QUEST");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLayout(new BorderLayout());
         
-        // Área Principal (Eventos do Jogo)
-        mainArea = new JTextArea();
-        mainArea.setEditable(false);
-        mainArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        mainArea.setBorder(BorderFactory.createTitledBorder("Game"));
-        frame.add(new JScrollPane(mainArea), BorderLayout.CENTER);
+        // Painel principal
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.BLACK);
         
-        // Área do Jogador (Status)
-        playerStatus = new JTextArea();
-        playerStatus.setEditable(false);
-        playerStatus.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        playerStatus.setBorder(BorderFactory.createTitledBorder("Player Status"));
-        frame.add(new JScrollPane(playerStatus), BorderLayout.WEST);
+        // Área de status do jogador
+        statusTextArea = new JTextArea(5, 20);
+        statusTextArea.setEditable(false);
+        statusTextArea.setBackground(Color.BLACK);
+        statusTextArea.setForeground(Color.YELLOW);
+        statusTextArea.setFont(new Font("Courier New", Font.PLAIN, 14));
+        JScrollPane statusScroll = new JScrollPane(statusTextArea);
+        statusScroll.setBorder(BorderFactory.createTitledBorder("- Player Status -"));
         
-        // Área de Ações
-        actionArea = new JTextArea();
-        actionArea.setEditable(false);
-        actionArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        actionArea.setBorder(BorderFactory.createTitledBorder("Actions"));
-        frame.add(new JScrollPane(actionArea), BorderLayout.EAST);
+        // Área principal do jogo
+        gameTextArea = new JTextArea(20, 50);
+        gameTextArea.setEditable(false);
+        gameTextArea.setBackground(Color.BLACK);
+        gameTextArea.setForeground(Color.WHITE);
+        gameTextArea.setFont(new Font("Courier New", Font.PLAIN, 14));
+        JScrollPane gameScroll = new JScrollPane(gameTextArea);
+        gameScroll.setBorder(BorderFactory.createTitledBorder("- Game -"));
         
-        // Área de Logs
-        logArea = new JTextArea(5, 50);
-        logArea.setEditable(false);
-        logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        logArea.setBorder(BorderFactory.createTitledBorder("Log"));
-        frame.add(new JScrollPane(logArea), BorderLayout.SOUTH);
+        // Área de log
+        logTextArea = new JTextArea(5, 50);
+        logTextArea.setEditable(false);
+        logTextArea.setBackground(Color.BLACK);
+        logTextArea.setForeground(Color.WHITE);
+        logTextArea.setFont(new Font("Courier New", Font.PLAIN, 12));
+        JScrollPane logScroll = new JScrollPane(logTextArea);
+        logScroll.setBorder(BorderFactory.createTitledBorder("- Log -"));
         
-        // Botão de Próxima Rodada
+        // Botão de próxima rodada
         nextRoundButton = new JButton("Next Round");
-        nextRoundButton.addActionListener(e -> nextRound());
+        nextRoundButton.setBackground(Color.DARK_GRAY);
+        nextRoundButton.setForeground(Color.YELLOW);
+        nextRoundButton.setFont(new Font("Courier New", Font.BOLD, 14));
+        
+        // Layout
+        mainPanel.add(statusScroll, BorderLayout.WEST);
+        mainPanel.add(gameScroll, BorderLayout.CENTER);
+        frame.add(mainPanel, BorderLayout.CENTER);
+        frame.add(logScroll, BorderLayout.SOUTH);
         frame.add(nextRoundButton, BorderLayout.NORTH);
         
+        // Iniciando tela
         frame.setVisible(true);
-        displayWelcomeMessage();
-    }
-
-    private void displayWelcomeMessage() {
-        mainArea.setText("Welcome to Hazard's Quest!\nPress 'Next Round' to start.\n");
-        updatePlayerStatus();
-    }
-
-    private void nextRound() {
-        mainArea.append("\nNew round begins!\n");
-        logArea.append("[LOG] Round started.\n");
-        // Lógica do jogo aqui
-        updatePlayerStatus();
-    }
-
-    private void updatePlayerStatus() {
-        playerStatus.setText("Health: " + game.getPlayerLife() + "\n");
-        playerStatus.append("Weapon: " + game.getEquippedWeapon() + "\n");
-        playerStatus.append("Shield: " + game.getEquippedShield() + "\n");
-        playerStatus.append("Ability: " + game.getActiveAbility() + "\n");
+        
+        // Exemplo de inicialização
+        statusTextArea.setText("Health: 15\nWeapon: null\nShield: null\nAbility: null");
+        gameTextArea.setText("Welcome to Hazard's Quest!\nPress 'Next Round' to start.");
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GameUI::new);
+        SwingUtilities.invokeLater(GameUIv2::new);
     }
 }
