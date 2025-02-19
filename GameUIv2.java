@@ -13,7 +13,7 @@ public class GameUIv2 {
     public GameUIv2() {
         frame = new JFrame("HAZARD'S QUEST");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(900, 650);
         frame.setLayout(new BorderLayout());
         
         // Painel principal
@@ -21,11 +21,11 @@ public class GameUIv2 {
         mainPanel.setBackground(Color.BLACK);
         
         // Área de status do jogador
-        statusTextArea = new JTextArea(5, 20);
+        statusTextArea = new JTextArea(6, 30);
         statusTextArea.setEditable(false);
         statusTextArea.setBackground(Color.BLACK);
         statusTextArea.setForeground(Color.YELLOW);
-        statusTextArea.setFont(new Font("Courier New", Font.PLAIN, 14));
+        statusTextArea.setFont(new Font("Courier New", Font.PLAIN, 15));
         JScrollPane statusScroll = new JScrollPane(statusTextArea);
         statusScroll.setBorder(BorderFactory.createTitledBorder("- Player Status -"));
         
@@ -34,12 +34,12 @@ public class GameUIv2 {
         gameTextArea.setEditable(false);
         gameTextArea.setBackground(Color.BLACK);
         gameTextArea.setForeground(Color.WHITE);
-        gameTextArea.setFont(new Font("Courier New", Font.PLAIN, 14));
+        gameTextArea.setFont(new Font("Courier New", Font.PLAIN, 16));
         JScrollPane gameScroll = new JScrollPane(gameTextArea);
         gameScroll.setBorder(BorderFactory.createTitledBorder("- Game -"));
         
         // Área de log
-        logTextArea = new JTextArea(5, 50);
+        logTextArea = new JTextArea(8, 50);
         logTextArea.setEditable(false);
         logTextArea.setBackground(Color.BLACK);
         logTextArea.setForeground(Color.WHITE);
@@ -64,7 +64,15 @@ public class GameUIv2 {
         frame.setVisible(true);
         
         // Exemplo de inicialização
-        statusTextArea.setText("Health: 15\nWeapon: null\nShield: null\nAbility: null");
+        statusTextArea.setText("Health: 15\n" +
+                "\nWeapon: \n" +
+                "\nShield: \n" +
+                "\nAbility: \n" +
+                "\nDivinity: \n" +
+                "\nDisease: \n" +
+                "\nCurse: \n" + 
+                "\nBackpack:\n Slot 1: Empty\n \n Slot 2: Empty");
+        
         gameTextArea.setText("Welcome to Hazard's Quest!\nPress 'Next Round' to start.");
     }
 
