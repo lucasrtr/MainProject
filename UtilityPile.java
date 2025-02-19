@@ -7,7 +7,8 @@ import java.util.Random;
 public class UtilityPile {
 
 	private List<UtilityCard> utilityCards;
-
+	private Card card;
+	
 	public UtilityPile() {
 		utilityCards = new ArrayList<>();
 		initializeCards();
@@ -16,36 +17,39 @@ public class UtilityPile {
 
 	public void initializeCards() {
 		// Blessings
-		utilityCards.add(new UtilityCard("Taxing the Rich", "Player receives +5 gold per killing.", 0, 0));
-		utilityCards.add(new UtilityCard("Unshakable Faith", "Player is immune to all Curses.", 0, 0));
-		utilityCards.add(new UtilityCard("Supreme Outcry", "Player is revived with 6 life and draws 3 cards.", 0, 0));
+		utilityCards.add(new UtilityCard("Taxing the Rich", "Blessing", "Player receives +5 gold per killing.", 0, 0));
+		
+		utilityCards.add(new UtilityCard("Unshakable Faith", "Blessing", "Player is immune to all Curses.", 0, 0));
+		
+		utilityCards.add(new UtilityCard("Supreme Outcry", "Blessing", "Player is revived with 6 life and draws 3 cards.", 0, 0));
+		
 
 		//Abilities
-		utilityCards.add(new UtilityCard("Vigorousness", "Player is immune to all Diseases.", 0, 0));
-		utilityCards.add(new UtilityCard("Friendly Mule", "Player can escape all enemies and misfortunes without losing the backpack.", 0, 0));
+		utilityCards.add(new UtilityCard("Vigorousness", "Ability", "Player is immune to all Diseases.", 0, 0));
+		utilityCards.add(new UtilityCard("Friendly Mule", "Ability", "Player can escape all enemies and misfortunes without losing the backpack.", 0, 0));
 
 		//Random
-		utilityCards.add(new UtilityCard("Gold Coins", "+ 5 gold coins!", 0, 0));
+		utilityCards.add(new UtilityCard("Gold Coins", "Random", "+ 5 gold coins!", 0, 0));
 
 		//Special Items
-		utilityCards.add(new UtilityCard("Healing Schnapps", "Effect: Heals 5 of health and cure active diseases.", 0, 0));
-		utilityCards.add(new UtilityCard("Lord's Gloves", "Effect: Increases + 2/3 of equipped weapon.", 0, 0));
-		utilityCards.add(new UtilityCard("Shield Ointment", "Effect: +3 resistance to equipped shield.", 0, 0));
+		utilityCards.add(new UtilityCard("Healing Schnapps", "Special Item", "Effect: Heals 5 of health and cure active diseases.", 0, 0));
+		utilityCards.add(new UtilityCard("Lord's Gloves", "Special Item", "Effect: Increases + 2/3 of equipped weapon.", 0, 0));
+		utilityCards.add(new UtilityCard("Shield Ointment", "Special Item", "Effect: +3 resistance to equipped shield.", 0, 0));
 		//Weapons
-		utilityCards.add(new UtilityCard("Barely Usable Stick", "", 4, 1));
-		utilityCards.add(new UtilityCard("Dagger", "", 4, 2));
-		utilityCards.add(new UtilityCard("Crossbow", "", 4, 3));
-		utilityCards.add(new UtilityCard("Crossbow", "", 4, 3));
-		utilityCards.add(new UtilityCard("Sword", "", 6, 2));
-		utilityCards.add(new UtilityCard("Magic Sword", "", 8, 2));
-		utilityCards.add(new UtilityCard("QuestEnder", "", 10, 1));
+		utilityCards.add(new UtilityCard("Barely Usable Stick", "Weapon", "", 4, 1));
+		utilityCards.add(new UtilityCard("Dagger", "Weapon", "", 4, 2));
+		utilityCards.add(new UtilityCard("Crossbow", "Weapon", "", 4, 3));
+		utilityCards.add(new UtilityCard("Crossbow", "Weapon", "", 4, 3));
+		utilityCards.add(new UtilityCard("Sword", "Weapon", "", 6, 2));
+		utilityCards.add(new UtilityCard("Magic Sword", "Weapon","", 8, 2));
+		utilityCards.add(new UtilityCard("QuestEnder", "Weapon","", 10, 1));
 		//Shields
-		utilityCards.add(new UtilityCard("Sewer Cover", "", 0, 2));
-		utilityCards.add(new UtilityCard("Moribund's Corpse", "", 0, 4));
-		utilityCards.add(new UtilityCard("Wooden Shield", "", 0, 6));
-		utilityCards.add(new UtilityCard("Metal Shield", "", 0, 8));
-		utilityCards.add(new UtilityCard("Magical Shield", "", 0, 10));
-		utilityCards.add(new UtilityCard("RaddanShield", "", 0, 12));
+		utilityCards.add(new UtilityCard("Sewer Cover", "Shield", "", 0, 2));
+		utilityCards.add(new UtilityCard("Moribund's Corpse", "Shield", "", 0, 4));
+		utilityCards.add(new UtilityCard("Wooden Shield", "Shield", "", 0, 6));
+		utilityCards.add(new UtilityCard("Metal Shield", "Shield", "", 0, 8));
+		utilityCards.add(new UtilityCard("Magical Shield", "Shield", "", 0, 10));
+		utilityCards.add(new UtilityCard("RaddanShield", "Shield", "", 0, 12));
 	}
 
 	public void add(UtilityCard newCard) {

@@ -7,14 +7,14 @@ import java.util.Random;
 public class GameRound {
 
 	private Player player;
-	private List<UtilityPile> utilityPile = new ArrayList<>();
+	private List<UtilityCard> utilityPile = new ArrayList<>();
 	private List<HazardCard> drawnHazardCards = new ArrayList<>();
 	private List<HazardCard> hazardPile = new ArrayList<>();
 	private final int TOTAL_ROUNDS = 13;
 	private Random random = new Random();
 
 
-	public GameRound(Player player, List<UtilityPile> utilityPile, List<HazardPile> hazardPile) {
+	public GameRound(Player player, List<UtilityPile> utilityCard, List<HazardPile> hazardPile) {
 		this.player = player;
 		this.drawnHazardCards = new ArrayList<>();
 	}
@@ -57,10 +57,9 @@ public class GameRound {
 	            numberOfCards += 3;
 	        }
 
-	        System.out.println("Cartas de Utilidade sorteadas:");
 	        for (int i = 0; i < numberOfCards && i < utilityPile.size(); i++) {
-	            UtilityPile card = utilityPile.get(i);
-	            System.out.println("- " + card.getTitle());
+	            UtilityCard card = utilityPile.get(i);
+	            System.out.println("- " + card.getTitle()); // Agora o getTitle() funcionará
 	            player.equipItem(card);
 	        }
 	    }

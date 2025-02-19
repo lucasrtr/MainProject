@@ -163,7 +163,11 @@ public class GameUIv2 {
 	    for (String title : drawnCardTitles) {
 	        for (UtilityCard card : utilityPile.getUtilityCards()) {
 	            if (card.getTitle().equals(title)) {
-	                gameText.append(card.getTitle()).append(" (").append(card.getType().toLowerCase()).append(")\n");
+	            	
+	            	// Define o subtipo da utilidade
+	            	String subType = card.getSubType() != null ? card.getSubType().toLowerCase() : "utility";
+	            	
+	                gameText.append(card.getTitle()).append(" (").append(subType).append(")\n");
 
 	                if (card.getEffect() != null && !card.getEffect().isEmpty()) {
 	                    gameText.append("-> ").append(card.getEffect()).append("\n\n");

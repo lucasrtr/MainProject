@@ -19,7 +19,7 @@ public class Player {
     private Effects activeDisease;
     private Effects activeCurse;
 	private List<UtilityCard> backpack; 
-	private List<UtilityPile> equippedItems = new ArrayList<>();
+	private List<UtilityCard> equippedItems = new ArrayList<>();
 
 	public Player() {
 		this.canUseEscape = true; // O jogador pode fugir uma vez por rodada
@@ -64,7 +64,7 @@ public class Player {
 		creaturesDefeatedLastRound++;
 	}
 	
-	public void equipItem(UtilityPile item) {
+	public void equipItem(UtilityCard item) {
 		equippedItems.add(item);
 		System.out.println("Equipped item: " + item.getTitle());
 	}
@@ -90,7 +90,7 @@ public class Player {
 	
 	public void showEquippedItems() {
         System.out.println("Itens equipados:");
-        for (UtilityPile item : equippedItems) {
+        for (UtilityCard item : equippedItems) {
             System.out.println("- " + item.getTitle());
         }
     }
