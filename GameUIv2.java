@@ -102,8 +102,13 @@ public class GameUIv2 {
 		mainPanel.add(gameScroll, BorderLayout.CENTER);
 		frame.add(mainPanel, BorderLayout.CENTER);
 		frame.add(logScroll, BorderLayout.SOUTH);
-		frame.add(commandField, BorderLayout.NORTH);
-		frame.add(nextRoundButton, BorderLayout.NORTH);
+		
+		// Painel para agrupar o campo de comando e o botão
+		JPanel commandPanel = new JPanel(new BorderLayout());
+		commandPanel.add(commandField, BorderLayout.CENTER);
+		commandPanel.add(nextRoundButton, BorderLayout.EAST);
+
+		frame.add(commandPanel, BorderLayout.NORTH);
 
 		// Iniciando tela
 		frame.setVisible(true);
