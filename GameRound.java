@@ -14,7 +14,7 @@ public class GameRound {
 	private Random random = new Random();
 
 
-	public GameRound(Player player, List<UtilityPile> utilityPiles, List<HazardPile> hazardPiles) {
+	public GameRound(Player player, List<UtilityPile> utilityPile, List<HazardPile> hazardPile) {
 		this.player = player;
 		this.drawnHazardCards = new ArrayList<>();
 	}
@@ -80,12 +80,15 @@ public class GameRound {
 		if (hazard.isCreature()) {
 			System.out.println("Você encontrou uma criatura: " + hazard.getTitle());
 			boolean fled = player.useEscapeAbility();
+			
 			if (fled) {
 				System.out.println("O jogador fugiu e perdeu os itens da mochila!");
+		//		player.clearBackpack(); //implementar este método
 				return true; // Retorna true para indicar que o jogador fugiu
 			}
 			if (hazard instanceof Creature creature) {
 				return initiateCombat(creature);
+				
 			} else {
 				System.out.println("Erro: Tentativa de iniciar combate com uma carta que não é uma criatura.");
 				return false;
@@ -105,7 +108,7 @@ public class GameRound {
 	    System.out.println("Iniciando combate...");
 	    int creaturesDefeated = 0;
 	    
-	    for (HazardCard hazard : hazardPile) {
+	    for (HazardCard hazard : drawnHazardCards) {
 	        if (hazard.isCreature()) {
 	            System.out.println("O jogador enfrenta: " + hazard.getTitle());
 	            player.takeDamage(hazard.getAttack());

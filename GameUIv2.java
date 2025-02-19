@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,6 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import cardGame.UtilityPile;
+import cardGame.UtilityCard;
 
 public class GameUIv2 {
 	private JFrame frame;
@@ -22,6 +25,7 @@ public class GameUIv2 {
 	private JTextArea logTextArea;
 	private JTextField commandField; // Nova área de entrada de comando
 	private JButton nextRoundButton;
+	private UtilityPile utilityPile;
 	private Game game; //Instância da classe Game
 
 
@@ -30,9 +34,17 @@ public class GameUIv2 {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(900, 650);
 		frame.setLayout(new BorderLayout());
+		
+		gameTextArea = new JTextArea();
+		gameTextArea.setEditable(false);
+	    frame.add(new JScrollPane(gameTextArea), BorderLayout.CENTER);
 
 		// Inicializando o jogo
 		game = new Game(); // Cria a instância do jogo
+		
+		// Inicializando a pilha de cartas de utilidade
+		utilityPile = new UtilityPile();
+		showUtilityCards();
 
 		// Painel principal
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -92,7 +104,7 @@ public class GameUIv2 {
 		nextRoundButton.addActionListener(e -> {
 			// Sorteia 3 cartas de utilidade quando o botão é clicado 
 			int numberOfCards = 3; // Sempre sorteia 3 cartas na primeira rodada !!!
-			java.util.List<String> drawnCards = game.drawUtilityCards(numberOfCards);
+			List<String> drawnCards = game.drawUtilityCards(numberOfCards);
 			updateGameArea(drawnCards); // Atualiza a área do jogo com as cartas sorteadas
 			updateLogArea("Drawn 3 utility cards: " + String.join(", ", drawnCards)); // Atualiza o histórico
 		});
@@ -125,16 +137,47 @@ public class GameUIv2 {
 
 		gameTextArea.setText("Welcome to Hazard's Quest!\nPress 'Next Round' to start.");
 	}
+	
+	private void showUtilityCards() {
+		gameTextArea.setText("Utility Cards:\n");
+		List<UtilityCard> cards = utilityPile.getUtilityCards();
+		
+		for (UtilityCard card : cards) {
+			String cardInfo = card.getTitle(); // Nome da carta
+			
+			// Exibe o efeito ou stats de ataque/durabilidade caso houver
+			if (card.getEffect() != null && !card.getEffect().isEmpty()) {
+				cardInfo += " Effect: " + card.getEffect();
 
-	// Atualiza a área de jogo com os títulos das cartas sorteadas
-	private void updateGameArea(java.util.List<String> drawnCards) {
-		StringBuilder gameText = new StringBuilder();
-		for (String card : drawnCards) {
-			gameText.append("Drawn Cards: ").append(card).append("\n");
+			} else {
+				cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
+			}
+			gameTextArea.append(cardInfo + "\n"); // Adiciona as informações no gameTextArea
 		}
-		gameTextArea.setText(gameText.toString()); // Atualiza a area de jogo
 	}
 
+	// Atualiza a área de jogo com os títulos das cartas sorteadas
+	private void updateGameArea(List<String> drawnCardTitles) {
+	    StringBuilder gameText = new StringBuilder("Drawn Utility Cards:\n\n");
+
+	    for (String title : drawnCardTitles) {
+	        for (UtilityCard card : utilityPile.getUtilityCards()) {
+	            if (card.getTitle().equals(title)) {
+	                gameText.append(card.getTitle()).append(" (").append(card.getType().toLowerCase()).append(")\n");
+
+	                if (card.getEffect() != null && !card.getEffect().isEmpty()) {
+	                    gameText.append("-> ").append(card.getEffect()).append("\n\n");
+	                } else {
+	                    gameText.append("ATK: ").append(card.getAttackPower()).append("\n")
+	                            .append("DUR: ").append(card.getDurability()).append("\n\n");
+	                }
+	            }
+	        }
+	    }
+
+	    gameTextArea.setText(gameText.toString().trim()); // Remove o espaço extra no final
+	}
+	
 	// Atualiza o histórico (log) com a ação realizada
 	private void updateLogArea(String logMessage) {
 		String currentLog = logTextArea.getText();
