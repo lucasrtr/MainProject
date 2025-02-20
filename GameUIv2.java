@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +30,8 @@ public class GameUIv2 {
 	private UtilityPile utilityPile;
 	private Game game; //Instância da classe Game
 
+	private int selectedCardIndex = 0; // Índice de carta selecionada
+	private List<UtilityCard> allCards = new ArrayList<>(); // Lista de todas as cartas de utilidade
 
 	public GameUIv2() {
 		frame = new JFrame("HAZARD'S QUEST");
@@ -102,16 +106,16 @@ public class GameUIv2 {
 
 		// Action listener para o botão de próxima rodada
 		nextRoundButton.addActionListener(e -> {
-		    int numberOfCards = 3; 
-		    game.initializePiles(); // Garante que as pilhas são inicializadas antes do sorteio
-		    List<String> drawnCards = game.drawUtilityCards(numberOfCards);
+			int numberOfCards = 3; 
+			game.initializePiles(); // Garante que as pilhas são inicializadas antes do sorteio
+			List<String> drawnCards = game.drawUtilityCards(numberOfCards);
 
-		    if (drawnCards.isEmpty()) {
-		        updateGameArea(List.of("No cards drawn."));
-		    } else {
-		        updateGameArea(drawnCards);
-		        updateLogArea("Drawn 3 utility cards: " + String.join(", ", drawnCards));
-		    }
+			if (drawnCards.isEmpty()) {
+				updateGameArea(List.of("No cards drawn."));
+			} else {
+				updateGameArea(drawnCards);
+				updateLogArea("Drawn 3 utility cards: " + String.join(", ", drawnCards));
+			}
 		});
 
 		// Layout
@@ -141,30 +145,84 @@ public class GameUIv2 {
 				"\nBackpack:\n Slot 1: Empty\n \n Slot 2: Empty");
 
 		gameTextArea.setText("Welcome to Hazard's Quest!\nPress 'Next Round' to start.");
+
+
+		// Adicionando o KeyListener para a navegação
+		gameTextArea.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int code = e.getKeyCode();
+
+				// Setas para cima e para baixo para navegar entre as cartas
+				if (code == KeyEvent.VK_UP) {
+					if (selectedCardIndex > 0) {
+						selectedCardIndex--;
+					}
+				} else if (code == KeyEvent.VK_DOWN) {
+					if (selectedCardIndex < allCards.size() -1) {
+						selectedCardIndex++;
+					}
+				}
+
+				// Atualiza a visualização das cartas com a carta selecionada
+				updateGameAreaWithSelection();
+			}
+		});
+
+		// Foco no gameTextArea para capturar as teclas
+		gameTextArea.setFocusable(true);
+
 	}
 
 	private void showUtilityCards() {
-	    gameTextArea.setText("Utility Cards:\n");
-	    List<UtilityCard> cards = new ArrayList<>(utilityPile.getUtilityCards()); // Cria uma cópia da lista para evitar modificar a original
-	    List<UtilityCard> allCards = new ArrayList<>();
+		gameTextArea.setText("Utility Cards:\n");
+		List<UtilityCard> cards = new ArrayList<>(utilityPile.getUtilityCards()); // Cria uma cópia da lista para evitar modificar a original
+		List<UtilityCard> allCards = new ArrayList<>();
 
-	    for (UtilityCard card : cards) {
-	        for (int i = 0; i < card.getQuantity(); i++) {
-	            allCards.add(card);
-	        }
-	    }
+		for (UtilityCard card : cards) {
+			for (int i = 0; i < card.getQuantity(); i++) {
+				allCards.add(card);
+			}
+		}
 
-	    Collections.shuffle(allCards); // Embaralha a lista com todas as cópias
+		Collections.shuffle(allCards); // Embaralha a lista com todas as cópias
 
-	    for (UtilityCard card : allCards) {
-	        String cardInfo = card.getTitle();
-	        if (card.getEffect() != null && !card.getEffect().isEmpty()) {
-	            cardInfo += " - Effect: " + card.getEffect();
-	        } else {
-	            cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
-	        }
-	        gameTextArea.append(cardInfo + "\n");
-	    }
+		updateGameAreaWithSelection();
+
+		for (UtilityCard card : allCards) {
+			String cardInfo = card.getTitle();
+			if (card.getEffect() != null && !card.getEffect().isEmpty()) {
+				cardInfo += " - Effect: " + card.getEffect();
+			} else {
+				cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
+			}
+			gameTextArea.append(cardInfo + "\n");
+		}
+	}
+
+	private void updateGameAreaWithSelection() {
+		StringBuilder gameText = new StringBuilder("Utility Cards:\n\n");
+
+		for (int i = 0; i < allCards.size(); i++) {
+			UtilityCard card = allCards.get(i);
+			String cardInfo = card.getTitle();
+
+			if (card.getEffect() != null && !card.getEffect().isEmpty()) {
+				cardInfo += " - Effect: " + card.getEffect();
+			} else {
+				cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
+			}
+
+			// Se for a carta selecionada, destaca
+			if (i == selectedCardIndex) {
+				gameText.append("> ");
+			} else {
+				gameText.append("  ");
+			}
+			gameText.append(cardInfo).append("\n");
+		}
+
+		gameTextArea.setText(gameText.toString().trim()); // Remove o espaço extra no final
 	}
 
 

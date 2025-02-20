@@ -1,6 +1,7 @@
 package cardGame;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
@@ -112,14 +113,17 @@ public class Game {
 
 	//sortear cartas de utilidade:
 	public List<String> drawUtilityCards(int numberOfCards) {
-		List<String> drawnCardTitles = new ArrayList<>();
-		for (int i = 0; i < numberOfCards; i++) {
-			UtilityCard card = utilityPile.drawCard();
-			if (card != null) {
-				drawnCardTitles.add(card.getTitle()); // Adiciona o título da carta à lista
-			}
-		}
-		return drawnCardTitles; // Retorna a lista de títulos das cartas
+	    List<String> drawnCardTitles = new ArrayList<>();
+	    List<UtilityCard> allCards = new ArrayList<>(utilityPile.getUtilityCards()); // Cria uma cópia para não modificar a original
+	    Collections.shuffle(allCards); // Embaralha as cartas
+
+	    for (int i = 0; i < numberOfCards; i++) {
+	        UtilityCard card = allCards.get(i);
+	        if (card != null) {
+	            drawnCardTitles.add(card.getTitle());
+	        }
+	    }
+	    return drawnCardTitles;
 	}
 
 	public void showUtilityCards() {
