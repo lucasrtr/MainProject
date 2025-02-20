@@ -59,7 +59,7 @@ public class Game {
 		return player.getActiveCurse();
 	}
 
-	private void initializePiles() {
+	public void initializePiles() {
 		utilityPile.initializeCards();
 		hazardPile.initializeCards();
 		tokenPile.initializeCards();
