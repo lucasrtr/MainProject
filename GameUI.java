@@ -20,7 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class GameUIv2 {
+public class GameUI {
 	private JFrame frame;
 	private JTextArea gameTextArea;
 	private JTextArea statusTextArea;
@@ -29,19 +29,22 @@ public class GameUIv2 {
 	private JButton nextRoundButton;
 	private UtilityPile utilityPile;
 	private Game game; //Instância da classe Game
+	private int selectedIndex = 0;
 
 	private int selectedCardIndex = 0; // Índice de carta selecionada
 	private List<UtilityCard> allCards = new ArrayList<>(); // Lista de todas as cartas de utilidade
+	private List<UtilityCard> drawnCardsList = new ArrayList<>(); // Lista das cartas sorteadas da rodada
 
-	public GameUIv2() {
+
+	public GameUI() {
 		frame = new JFrame("HAZARD'S QUEST");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(900, 650);
 		frame.setLayout(new BorderLayout());
-
 		gameTextArea = new JTextArea();
 		gameTextArea.setEditable(false);
 		frame.add(new JScrollPane(gameTextArea), BorderLayout.CENTER);
+		setupKeyListener();
 
 		// Inicializando o jogo
 		game = new Game(); // Cria a instância do jogo
@@ -114,7 +117,7 @@ public class GameUIv2 {
 				updateGameArea(List.of("No cards drawn."));
 			} else {
 				updateGameArea(drawnCards);
-				updateLogArea("Drawn 3 utility cards: " + String.join(", ", drawnCards));
+				updateLogArea("Drawn 3 utility cards:\n" + "\n" + String.join("\n", drawnCards));
 			}
 		});
 
@@ -176,8 +179,9 @@ public class GameUIv2 {
 
 	private void showUtilityCards() {
 		gameTextArea.setText("Utility Cards:\n");
-		List<UtilityCard> cards = new ArrayList<>(utilityPile.getUtilityCards()); // Cria uma cópia da lista para evitar modificar a original
-		List<UtilityCard> allCards = new ArrayList<>();
+		allCards.clear(); // Limpa a lista antes de adicionar novas cartas
+
+		List<UtilityCard> cards = new ArrayList<>(utilityPile.getUtilityCards());
 
 		for (UtilityCard card : cards) {
 			for (int i = 0; i < card.getQuantity(); i++) {
@@ -185,26 +189,17 @@ public class GameUIv2 {
 			}
 		}
 
-		Collections.shuffle(allCards); // Embaralha a lista com todas as cópias
+		Collections.shuffle(allCards);
 
-		updateGameAreaWithSelection();
-
-		for (UtilityCard card : allCards) {
-			String cardInfo = card.getTitle();
-			if (card.getEffect() != null && !card.getEffect().isEmpty()) {
-				cardInfo += " - Effect: " + card.getEffect();
-			} else {
-				cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
-			}
-			gameTextArea.append(cardInfo + "\n");
-		}
+		updateGameAreaWithSelection(); // Exibe as cartas com destaque na selecionada
 	}
 
-	private void updateGameAreaWithSelection() {
-		StringBuilder gameText = new StringBuilder("Utility Cards:\n\n");
 
-		for (int i = 0; i < allCards.size(); i++) {
-			UtilityCard card = allCards.get(i);
+	private void updateGameAreaWithSelection() {
+		StringBuilder gameText = new StringBuilder("Drawn Utility Cards:\n\n");
+
+		for (int i = 0; i < drawnCardsList.size(); i++) {
+			UtilityCard card = drawnCardsList.get(i);
 			String cardInfo = card.getTitle();
 
 			if (card.getEffect() != null && !card.getEffect().isEmpty()) {
@@ -213,30 +208,29 @@ public class GameUIv2 {
 				cardInfo += " (ATK: " + card.getAttackPower() + ", DUR: " + card.getDurability() + ")";
 			}
 
-			// Se for a carta selecionada, destaca
 			if (i == selectedCardIndex) {
-				gameText.append("> ");
+				gameText.append("> "); // Destaca a carta selecionada
 			} else {
 				gameText.append("  ");
 			}
 			gameText.append(cardInfo).append("\n");
 		}
 
-		gameTextArea.setText(gameText.toString().trim()); // Remove o espaço extra no final
+		gameTextArea.setText(gameText.toString().trim());
 	}
 
 
 	// Atualiza a área de jogo com os títulos das cartas sorteadas
 	private void updateGameArea(List<String> drawnCardTitles) {
+		drawnCardsList.clear(); // Limpa as cartas da rodada anterior
 		StringBuilder gameText = new StringBuilder("Drawn Utility Cards:\n\n");
 
 		for (String title : drawnCardTitles) {
 			for (UtilityCard card : utilityPile.getUtilityCards()) {
 				if (card.getTitle().equals(title)) {
+					drawnCardsList.add(card); // Armazena apenas as cartas sorteadas
 
-					// Define o subtipo da utilidade
 					String subType = card.getSubType() != null ? card.getSubType().toLowerCase() : "utility";
-
 					gameText.append(card.getTitle()).append(" (").append(subType).append(")\n");
 
 					if (card.getEffect() != null && !card.getEffect().isEmpty()) {
@@ -249,7 +243,8 @@ public class GameUIv2 {
 			}
 		}
 
-		gameTextArea.setText(gameText.toString().trim()); // Remove o espaço extra no final
+		selectedCardIndex = 0; // Reseta a seleção para a primeira carta da rodada
+		gameTextArea.setText(gameText.toString().trim());
 	}
 
 	// Atualiza o histórico (log) com a ação realizada
@@ -261,18 +256,46 @@ public class GameUIv2 {
 
 	// Processa o comando inserido pelo usuário
 	private void handleCommand(String command) {
-		// Aqui você pode adicionar diferentes ações conforme o comando
-		if (command.equalsIgnoreCase("help")) {
-			updateLogArea("Available commands: 'help', 'next', 'status', etc.");
-		} else if (command.equalsIgnoreCase("status")) {
-			updateLogArea("Player status: Health: 15, Weapon: Sword, Shield: Wooden");
+		if (command.equalsIgnoreCase("up")) {
+			if (selectedCardIndex > 0) {
+				selectedCardIndex--;
+			}
+			updateGameAreaWithSelection();
+		} else if (command.equalsIgnoreCase("down")) {
+			if (selectedCardIndex < allCards.size() - 1) {
+				selectedCardIndex++;
+			}
+			updateGameAreaWithSelection();
 		} else {
 			updateLogArea("Unknown command: " + command);
 		}
 	}
 
+	private void setupKeyListener() {
+		// Listener para capturar o Enter
+		java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+			if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {
+				equipSelectedCard();
+				return true;
+			}
+			return false;
+		});
+	}
+
+	private void equipSelectedCard() {
+		Player player = game.getPlayer();
+		UtilityCard selectedCard = game.getUtilityCards().get(selectedIndex);
+
+		if (selectedCard != null) {
+			player.equipItem(selectedCard);
+			logTextArea.append("\nEquipped: " + selectedCard.getTitle() + "\n");
+		} else {
+			logTextArea.append("\nEquipped: " + selectedCard.getTitle() + "\n");
+		}
+	}
+
 
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(GameUIv2::new);
+		SwingUtilities.invokeLater(GameUI::new);
 	}
 }

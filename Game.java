@@ -28,6 +28,10 @@ public class Game {
 
 	}
 	
+	public List<UtilityCard> getUtilityCards() {
+	    return utilityPile.getUtilityCards();
+	}
+	
 	public Player getPlayer() {
 	    return player;
 	}
