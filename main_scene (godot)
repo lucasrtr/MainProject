@@ -1,0 +1,92 @@
+# Estrutura básica do jogo de cartas
+
+extends Node2D
+
+# Variáveis principais
+var player_health: int = 15
+var round_number: int = 1
+var utility_pile = []
+var hazard_pile = []
+var token_pile = []
+
+# Classe base para cartas
+class Card:
+	var title: String
+	var type: String
+	var damage: int
+	var durability: int
+	var effect: String
+
+	func _init(_title, _type, _effect, _damage, _durability):
+		title = _title
+		type = _type
+		effect = _effect
+		damage = _damage
+		durability = _durability
+
+# Função para inicializar o jogo
+func _ready():
+	print("Game Started!")
+	initialize_cards()
+	start_round()
+
+# Inicializar as pilhas de cartas
+func initialize_cards():
+	# Blessings
+	utility_pile.append(Card.new("Taxing the Rich", "Blessing", "Player receives +5 gold per killing.", 0, 0))
+	utility_pile.append(Card.new("Unshakable Faith", "Blessing", "Player is immune to all Curses.", 0, 0))
+	utility_pile.append(Card.new("Supreme Outcry", "Blessing", "Player is revived with 6 life and draws 3 cards.", 0, 0))
+
+	# Abilities
+	utility_pile.append(Card.new("Vigorousness", "Ability", "Player is immune to all Diseases.", 0, 0))
+	utility_pile.append(Card.new("Friendly Mule", "Ability", "Player can escape all enemies and misfortunes without losing the backpack.", 0, 0))
+
+	# Random
+	utility_pile.append(Card.new("Gold Coins", "Random", "+ 5 gold coins!", 0, 0))
+
+	# Special Items
+	utility_pile.append(Card.new("Healing Schnapps", "Special Item", "Effect: Heals 5 of health and cure active diseases.", 0, 0))
+	utility_pile.append(Card.new("Lord's Gloves", "Special Item", "Effect: Increases + 2/3 of equipped weapon.", 0, 0))
+	utility_pile.append(Card.new("Shield Ointment", "Special Item", "Effect: +3 resistance to equipped shield.", 0, 0))
+
+	# Weapons
+	utility_pile.append(Card.new("Barely Usable Stick", "Weapon", "", 4, 1))
+	utility_pile.append(Card.new("Dagger", "Weapon", "", 4, 2))
+	utility_pile.append(Card.new("Crossbow", "Weapon", "", 4, 3))
+	utility_pile.append(Card.new("Sword", "Weapon", "", 6, 2))
+	utility_pile.append(Card.new("Magic Sword", "Weapon", "", 8, 2))
+	utility_pile.append(Card.new("QuestEnder", "Weapon", "", 10, 1))
+
+	# Shields
+	utility_pile.append(Card.new("Sewer Cover", "Shield", "", 0, 2))
+	utility_pile.append(Card.new("Moribund's Corpse", "Shield", "", 0, 4))
+	utility_pile.append(Card.new("Wooden Shield", "Shield", "", 0, 6))
+	utility_pile.append(Card.new("Metal Shield", "Shield", "", 0, 8))
+	utility_pile.append(Card.new("Magical Shield", "Shield", "", 0, 10))
+	utility_pile.append(Card.new("RaddanShield", "Shield", "", 0, 12))
+
+# Iniciar uma nova rodada
+func start_round():
+	print("Round %d has begun!" % round_number)
+	draw_utility_card()
+
+# Comprar carta de utilidade
+func draw_utility_card():
+	if utility_pile.size() > 0:
+		var card = utility_pile.pop_front()
+		display_card(card)
+	else:
+		print("Utility Pile is empty.")
+
+# Exibir os atributos da carta
+func display_card(card):
+	print("Nome: %s" % card.title)
+	print("Tipo: %s" % card.type)
+	print("Dano: %d" % card.damage)
+	print("Durabilidade: %d" % card.durability)
+	print("Efeito: %s" % card.effect)
+
+# Função para finalizar a rodada
+func end_round():
+	round_number += 1
+	print("Rodada finalizada! Indo para a próxima.")
