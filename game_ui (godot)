@@ -1,0 +1,104 @@
+# Interface visual do jogo de cartas na Godot
+# Implementação em GDScript
+
+extends Control
+
+# Slots principais
+var player_card_slot
+var weapon_slot
+var shield_slot
+var backpack_slots = []
+var central_slots = []
+var utility_pile
+var hazard_pile
+var btn_end_round
+
+# Mensagens de log
+var log_label
+
+# Controle de arrastar cartas
+var dragging_card = null
+var original_position = Vector2.ZERO
+
+func _ready():
+	initialize_interface()
+
+func initialize_interface():
+	# Layout principal centralizado
+	var main_vbox = VBoxContainer.new()
+	main_vbox.anchor_left = 0.5
+	main_vbox.anchor_top = 0.5
+	main_vbox.pivot_offset = Vector2(300, 300)
+	main_vbox.position = get_viewport_rect().size / 2 - main_vbox.pivot_offset
+	add_child(main_vbox)
+
+	# Área de ação
+	var action_area = HBoxContainer.new()
+	main_vbox.add_child(action_area)
+
+	hazard_pile = create_card_slot(Color(0.7, 0, 0), Vector2(120, 180))
+	action_area.add_child(hazard_pile)
+
+	for i in range(3):
+		var slot = create_card_slot(Color(0.9, 0.5, 0.5), Vector2(120, 180))
+		central_slots.append(slot)
+		action_area.add_child(slot)
+
+	utility_pile = create_card_slot(Color(0, 0.7, 0.5), Vector2(120, 180))
+	action_area.add_child(utility_pile)
+
+	# Área do jogador
+	var player_area = VBoxContainer.new()
+	main_vbox.add_child(player_area)
+
+	var bottom_player_area = HBoxContainer.new()
+	bottom_player_area.alignment = HBoxContainer.ALIGNMENT_CENTER
+	player_area.add_child(bottom_player_area)
+
+	shield_slot = create_card_slot(Color(0.5, 0.5, 0.5), Vector2(100, 150))
+	bottom_player_area.add_child(shield_slot)
+
+	player_card_slot = create_card_slot(Color(0.9, 0.9, 0), Vector2(120, 180))
+	bottom_player_area.add_child(player_card_slot)
+
+	weapon_slot = create_card_slot(Color(0.5, 0.5, 0.5), Vector2(100, 150))
+	bottom_player_area.add_child(weapon_slot)
+
+	var backpack_area = HBoxContainer.new()
+	backpack_area.alignment = HBoxContainer.ALIGNMENT_CENTER
+	player_area.add_child(backpack_area)
+
+	for i in range(2):
+		var backpack_slot = create_card_slot(Color(0, 0, 0.5), Vector2(80, 120))
+		backpack_slots.append(backpack_slot)
+		backpack_area.add_child(backpack_slot)
+
+	# Botão de finalizar rodada
+	btn_end_round = Button.new()
+	btn_end_round.text = "End of Turn"
+	main_vbox.add_child(btn_end_round)
+
+	# Painel de log
+	log_label = Label.new()
+	log_label.text = "Log"
+	main_vbox.add_child(log_label)
+
+func create_card_slot(card_color: Color, card_size: Vector2) -> ColorRect:
+	var slot = ColorRect.new()
+	slot.color = card_color
+	slot.set_custom_minimum_size(card_size)
+	slot.mouse_filter = Control.MOUSE_FILTER_STOP
+	slot.connect("gui_input", _on_card_gui_input.bind(slot))
+	return slot
+
+func _on_card_gui_input(event, card):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		dragging_card = card
+		original_position = card.global_position
+	elif event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and dragging_card == card:
+		dragging_card.global_position = original_position
+		dragging_card = null
+
+func _process(_delta):
+	if dragging_card:
+		dragging_card.global_position = get_global_mouse_position() - dragging_card.size / 2
